@@ -52,11 +52,13 @@ using namespace std;
 // 而 parser 一旦解析完 CompUnit, 就说明所有的 token 都被解析了, 即解析结束了
 // 此时我们应该把 FuncDef 返回的结果收集起来, 作为 AST 传给调用 parser 的函数
 // $1 指代规则里第一个符号的返回值, 也就是 FuncDef 的返回值
-CompUnit : FuncDef {
+CompUnit
+  : FuncDef {
     auto comp_unit = make_unique<CompUnitAST>();
     comp_unit->func_def = unique_ptr<BaseAST>($1); 
     ast = move(comp_unit); 
-  };
+  }
+  ;
 
 // FuncDef ::= FuncType IDENT '(' ')' Block;
 // 我们这里可以直接写 '(' 和 ')', 因为之前在 lexer 里已经处理了单个字符的情况
@@ -68,39 +70,48 @@ CompUnit : FuncDef {
 // 否则会发生内存泄漏, 而 unique_ptr 这种智能指针可以自动帮我们 delete
 // 虽然此处你看不出用 unique_ptr 和手动 delete 的区别, 但当我们定义了 AST 之后
 // 这种写法会省下很多内存管理的负担
-FuncDef : FuncType IDENT '(' ')' Block {
+FuncDef
+  : FuncType IDENT '(' ')' Block {
     auto ast = new FuncDefAST();
+    // auto type = unique_ptr<string>($1);
     ast->func_type = unique_ptr<BaseAST>($1); 
+    // auto ident = unique_ptr<string>($2);
     ast->ident = *unique_ptr<string>($2); 
+
+    //auto block = unique_ptr<string>($5);
     ast->block = unique_ptr<BaseAST>($5);
     $$ = ast;
-  };
+  }
+  ;
 
 // 同上, 不再解释
-FuncType : INT {
+FuncType
+  : INT {
     auto ast = new FuncTypeAST();
     ast->type_ = *unique_ptr<string>(new string{"int"});
     $$ = ast;
-  };
+  }
+  ;
 
-Block : '{' Stmt '}' {
+Block
+  : '{' Stmt '}' {
     auto ast = new BlockAST();
     ast->left = *unique_ptr<string>(new string{"{ "});
     ast->stmt = unique_ptr<BaseAST>($2);
     ast->right = *unique_ptr<string>(new string{" }"});
     $$ = ast;
-  };
+  }
+  ;
 
 Stmt : RETURN Number ';' {
     auto ast = new StmtAST();
     ast->return_= *unique_ptr<string>(new string{"return"});
     ast->number = int($2); 
     $$ = ast;
-  };
+  }
+  ;
 
-Number : INT_CONST { 
-  $$ = int($1); 
-};
+Number : INT_CONST { $$ = ($1); };
 
 %%
 
