@@ -7,17 +7,17 @@
 namespace sysy::ir {
   class Context; 
 }
-
-namespace sysy::ast {
-class IASTGenerator;
-}
-
 namespace sysy::ast::node {
+
+static koopa_raw_program_builder_t builder; 
+static koopa_program_t program;
+
 class BaseAST {
  public:
   virtual ~BaseAST() = default;
   virtual void Dump() const = 0; 
-  virtual bool Codegen(IASTGenerator &generator) const = 0;
+  virtual void Codegen() const = 0;
+  // virtual void IRBuilder(sysy::ir::Context& ctx);
 };
 
 // CompUnit 是 BaseAST
@@ -30,7 +30,9 @@ class CompUnitAST : public BaseAST {
     func_def->Dump();
     std::cout << " }";
   }
-  virtual bool Codegen(IASTGenerator &generator) const override;   
+  void Codegen() const override{
+    koopa_build_raw_program(builder, program);
+  }
 };
 
 // FuncDef 也是 BaseAST
@@ -47,7 +49,8 @@ class FuncDefAST : public BaseAST {
     block->Dump();
     std::cout << " }";
   }
-  virtual bool Codegen(IASTGenerator &generator) const override;   
+  void Codegen() const override{
+  }
 };
 
 // Func_type 也是 BaseAST
@@ -59,7 +62,8 @@ class FuncTypeAST : public BaseAST {
     std::cout << type_ ;
     std::cout << " }";
   }
-  virtual bool Codegen(IASTGenerator &generator) const override;   
+  void Codegen() const override{
+  }
 };
 
 // block 也是 BaseAST
@@ -74,7 +78,8 @@ class BlockAST: public BaseAST {
     stmt->Dump();
     std::cout << right;
   }
-  virtual bool Codegen(IASTGenerator &generator) const override;   
+  void Codegen() const override{
+  }
 };
 
 // stmt 也是 BaseAST
@@ -88,6 +93,7 @@ class StmtAST: public BaseAST {
     std::cout << number;
     std::cout << " }";
   }
-  virtual bool Codegen(IASTGenerator &generator) const override;   
+  void Codegen() const override{
+  }
 };
 }
