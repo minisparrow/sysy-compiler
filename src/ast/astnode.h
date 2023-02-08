@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-
+namespace sysy::ast::node {
 class BaseAST {
  public:
   virtual ~BaseAST() = default;
@@ -73,6 +73,4 @@ class StmtAST: public BaseAST {
     std::cout << " }";
   }
 };
-
-
-// 所有 AST 的基类
+}

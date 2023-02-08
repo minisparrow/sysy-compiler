@@ -39,9 +39,10 @@
 #include <memory>
 #include <string>
 
-#include "include/ast.h"
+#include "ast/astnode.h"
 
 using namespace std;
+using namespace sysy::ast::node;
 
 // 声明 lexer 的输入, 以及 parser 函数
 // 为什么不引用 sysy.tab.hpp 呢? 因为首先里面没有 yyin 的定义
